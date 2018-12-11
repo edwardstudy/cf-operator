@@ -6,6 +6,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	bdcv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/boshdeployment/v1alpha1"
+	ejv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/extendedjob/v1alpha1"
 	essv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/extendedstatefulset/v1alpha1"
 )
 
@@ -184,6 +185,22 @@ func (c *Catalog) InterpolateBOSHDeployment(name, manifestRef, opsRef string, se
 			Ops: []bdcv1.Ops{
 				{Ref: opsRef, Type: bdcv1.ConfigMapType},
 				{Ref: secretRef, Type: bdcv1.SecretType},
+			},
+		},
+	}
+}
+
+// DefaultExtendedJob default values
+func (c *Catalog) DefaultExtendedJob(name string) *ejv1.ExtendedJob {
+	return &ejv1.ExtendedJob{
+		ObjectMeta: v1.ObjectMeta{Name: name},
+		Spec: ejv1.ExtendedJobSpec{
+			Triggers: ejv1.Triggers{
+				Selector: ejv1.Selector{
+					MatchLabels: map[string]string{
+						"a": "b",
+					},
+				},
 			},
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	bdcv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/boshdeployment/v1alpha1"
+	ejv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/extendedjob/v1alpha1"
 	essv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/extendedstatefulset/v1alpha1"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/client/clientset/versioned"
 	"github.com/pkg/errors"
@@ -131,7 +132,7 @@ func (m *Machine) WaitForBOSHDeploymentDeletion(namespace string, name string) e
 
 // HasBOSHDeployment returns true if the pod by that name is in state running
 func (m *Machine) HasBOSHDeployment(namespace string, name string) (bool, error) {
-	client := m.VersionedClientset.Boshdeployment().BOSHDeployments(namespace)
+	client := m.VersionedClientset.BoshdeploymentV1alpha1().BOSHDeployments(namespace)
 	_, err := client.Get(name, metav1.GetOptions{})
 	if err != nil {
 		if apierrors.IsNotFound(err) {
@@ -272,4 +273,13 @@ func (m *Machine) HasBOSHDeploymentEvent(namespace string, fieldSelector string)
 		return false, nil
 	}
 	return true, nil
+}
+
+// CreateExtendedJob creates an ExtendedJob
+func (m *Machine) CreateExtendedJob(namespace string, job ejv1.ExtendedJob) (*ejv1.ExtendedJob, TearDownFunc, error) {
+	client := m.VersionedClientset.Extendedjob().ExtendedJobs(namespace)
+	d, err := client.Create(&job)
+	return d, func() {
+		client.Delete(job.GetName(), &metav1.DeleteOptions{})
+	}, err
 }

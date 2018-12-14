@@ -6,9 +6,9 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
 
-	"code.cloudfoundry.org/cf-operator/integration/util"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/controllers/extendedjob"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/controllers/fakes"
+	"code.cloudfoundry.org/cf-operator/testing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -30,7 +30,7 @@ var _ = Describe("ExtendedJob", func() {
 
 	BeforeEach(func() {
 		mgr = &fakes.FakeManager{}
-		logs, log = util.NewTestLogger()
+		logs, log = testing.NewTestLogger()
 	})
 
 	Describe("Add", func() {

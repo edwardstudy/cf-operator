@@ -1,9 +1,11 @@
 package testing
 
 import (
+	"time"
+
 	v1beta1 "k8s.io/api/apps/v1beta1"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	bdcv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/boshdeployment/v1alpha1"
 	ejv1 "code.cloudfoundry.org/cf-operator/pkg/kube/apis/extendedjob/v1alpha1"
@@ -16,7 +18,7 @@ type Catalog struct{}
 // DefaultBOSHManifest for tests
 func (c *Catalog) DefaultBOSHManifest(name string) corev1.ConfigMap {
 	return corev1.ConfigMap{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Data: map[string]string{
 			"manifest": `instance-groups:
 - name: diego
@@ -30,7 +32,7 @@ func (c *Catalog) DefaultBOSHManifest(name string) corev1.ConfigMap {
 // DefaultSecret for tests
 func (c *Catalog) DefaultSecret(name string) corev1.Secret {
 	return corev1.Secret{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		StringData: map[string]string{},
 	}
 }
@@ -38,7 +40,7 @@ func (c *Catalog) DefaultSecret(name string) corev1.Secret {
 // DefaultBOSHDeployment fissile deployment CR
 func (c *Catalog) DefaultBOSHDeployment(name, manifestRef string) bdcv1.BOSHDeployment {
 	return bdcv1.BOSHDeployment{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec: bdcv1.BOSHDeploymentSpec{
 			Manifest: bdcv1.Manifest{Ref: manifestRef, Type: bdcv1.ConfigMapType},
 		},
@@ -48,7 +50,7 @@ func (c *Catalog) DefaultBOSHDeployment(name, manifestRef string) bdcv1.BOSHDepl
 // InterpolateOpsConfigMap for ops interpolate configmap tests
 func (c *Catalog) InterpolateOpsConfigMap(name string) corev1.ConfigMap {
 	return corev1.ConfigMap{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Data: map[string]string{
 			"ops": `- type: replace
   path: /instance-groups/name=diego?/instances
@@ -61,7 +63,7 @@ func (c *Catalog) InterpolateOpsConfigMap(name string) corev1.ConfigMap {
 // InterpolateOpsSecret for ops interpolate secret tests
 func (c *Catalog) InterpolateOpsSecret(name string) corev1.Secret {
 	return corev1.Secret{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		StringData: map[string]string{
 			"ops": `- type: remove
   path: /instance-groups/name=mysql?
@@ -73,7 +75,7 @@ func (c *Catalog) InterpolateOpsSecret(name string) corev1.Secret {
 // InterpolateOpsIncorrectSecret for ops interpolate incorrect secret tests
 func (c *Catalog) InterpolateOpsIncorrectSecret(name string) corev1.Secret {
 	return corev1.Secret{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		StringData: map[string]string{
 			"ops": `- type: remove
   path: /instance-groups/name=api
@@ -85,7 +87,7 @@ func (c *Catalog) InterpolateOpsIncorrectSecret(name string) corev1.Secret {
 // DefaultExtendedStatefulSet for use in integration tests
 func (c *Catalog) DefaultExtendedStatefulSet(name string) essv1.ExtendedStatefulSet {
 	return essv1.ExtendedStatefulSet{
-		ObjectMeta: v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 		},
 		Spec: essv1.ExtendedStatefulSetSpec{
@@ -100,7 +102,7 @@ func (c *Catalog) DefaultStatefulSet(name string) v1beta1.StatefulSet {
 	replicaCount := int32(1)
 
 	return v1beta1.StatefulSet{
-		ObjectMeta: v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 		},
 		Spec: v1beta1.StatefulSetSpec{
@@ -114,7 +116,7 @@ func (c *Catalog) DefaultStatefulSet(name string) v1beta1.StatefulSet {
 // DefaultPod defines a pod with a simple web server useful for testing
 func (c *Catalog) DefaultPod(name string) corev1.PodTemplateSpec {
 	return corev1.PodTemplateSpec{
-		ObjectMeta: v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 			Labels: map[string]string{
 				"testpod": "yes",
@@ -135,7 +137,7 @@ func (c *Catalog) DefaultPod(name string) corev1.PodTemplateSpec {
 // EmptyBOSHDeployment empty fissile deployment CR
 func (c *Catalog) EmptyBOSHDeployment(name, manifestRef string) bdcv1.BOSHDeployment {
 	return bdcv1.BOSHDeployment{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec:       bdcv1.BOSHDeploymentSpec{},
 	}
 }
@@ -143,7 +145,7 @@ func (c *Catalog) EmptyBOSHDeployment(name, manifestRef string) bdcv1.BOSHDeploy
 // DefaultBOSHDeploymentWithOps fissile deployment CR with ops
 func (c *Catalog) DefaultBOSHDeploymentWithOps(name, manifestRef string, opsRef string) bdcv1.BOSHDeployment {
 	return bdcv1.BOSHDeployment{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec: bdcv1.BOSHDeploymentSpec{
 			Manifest: bdcv1.Manifest{Ref: manifestRef, Type: bdcv1.ConfigMapType},
 			Ops: []bdcv1.Ops{
@@ -156,7 +158,7 @@ func (c *Catalog) DefaultBOSHDeploymentWithOps(name, manifestRef string, opsRef 
 // WrongTypeBOSHDeployment fissile deployment CR containing wrong type
 func (c *Catalog) WrongTypeBOSHDeployment(name, manifestRef string) bdcv1.BOSHDeployment {
 	return bdcv1.BOSHDeployment{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec: bdcv1.BOSHDeploymentSpec{
 			Manifest: bdcv1.Manifest{Ref: manifestRef, Type: "wrong-type"},
 		},
@@ -166,7 +168,7 @@ func (c *Catalog) WrongTypeBOSHDeployment(name, manifestRef string) bdcv1.BOSHDe
 // BOSHDeploymentWithWrongTypeOps fissile deployment CR with wrong type ops
 func (c *Catalog) BOSHDeploymentWithWrongTypeOps(name, manifestRef string, opsRef string) bdcv1.BOSHDeployment {
 	return bdcv1.BOSHDeployment{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec: bdcv1.BOSHDeploymentSpec{
 			Manifest: bdcv1.Manifest{Ref: manifestRef, Type: bdcv1.ConfigMapType},
 			Ops: []bdcv1.Ops{
@@ -179,7 +181,7 @@ func (c *Catalog) BOSHDeploymentWithWrongTypeOps(name, manifestRef string, opsRe
 // InterpolateBOSHDeployment fissile deployment CR
 func (c *Catalog) InterpolateBOSHDeployment(name, manifestRef, opsRef string, secretRef string) bdcv1.BOSHDeployment {
 	return bdcv1.BOSHDeployment{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec: bdcv1.BOSHDeploymentSpec{
 			Manifest: bdcv1.Manifest{Ref: manifestRef, Type: bdcv1.ConfigMapType},
 			Ops: []bdcv1.Ops{
@@ -190,10 +192,15 @@ func (c *Catalog) InterpolateBOSHDeployment(name, manifestRef, opsRef string, se
 	}
 }
 
+// DefaultPodEvent default values
+func (c *Catalog) DefaultPodEvent(t time.Time) corev1.Event {
+	return corev1.Event{LastTimestamp: metav1.NewTime(t)}
+}
+
 // DefaultExtendedJob default values
 func (c *Catalog) DefaultExtendedJob(name string) *ejv1.ExtendedJob {
 	return &ejv1.ExtendedJob{
-		ObjectMeta: v1.ObjectMeta{Name: name},
+		ObjectMeta: metav1.ObjectMeta{Name: name},
 		Spec: ejv1.ExtendedJobSpec{
 			Triggers: ejv1.Triggers{
 				Selector: ejv1.Selector{

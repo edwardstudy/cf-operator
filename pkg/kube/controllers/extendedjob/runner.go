@@ -27,6 +27,7 @@ func NewRunner(
 		log:      log,
 		client:   mgr.GetClient(),
 		recorder: mgr.GetRecorder("extendedjob runner"),
+		query:    NewQuery(mgr.GetClient()),
 	}
 }
 
@@ -34,6 +35,7 @@ type RunnerImpl struct {
 	log      *zap.SugaredLogger
 	client   client.Client
 	recorder record.EventRecorder
+	query    Query
 }
 
 // Run checks all existing extendedJobs
@@ -55,20 +57,34 @@ func (r *RunnerImpl) Run() {
 	for i := 0; i < len(obj.Items); i++ {
 		extendedJob := obj.Items[i]
 
-		job := &batchv1.Job{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("job-%s-%d", extendedJob.Name, i),
-				Namespace: extendedJob.Namespace,
-			},
-			Spec: jobSpec(),
-		}
+		r.query.RecentPodEvents()
+		// pods := r.query.Match(events, extendedJob.Spec.Triggers.Selector)
+		// for _, pod := range pods {
+		//         if ok := r.matcher.Match(extendedJob, pod); ok {
+		//                 r.createJob()
+		//         }
 
-		err = r.client.Create(context.TODO(), job)
-		if err != nil {
-			r.log.Infof("failed to create job for %s: %s", extendedJob.Name, err)
-		}
+		// }
+
+		r.createJob(extendedJob, i)
 
 	}
+}
+
+func (r *RunnerImpl) createJob(extendedJob v1alpha1.ExtendedJob, i int) {
+	job := &batchv1.Job{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      fmt.Sprintf("job-%s-%d", extendedJob.Name, i),
+			Namespace: extendedJob.Namespace,
+		},
+		Spec: jobSpec(),
+	}
+
+	err := r.client.Create(context.TODO(), job)
+	if err != nil {
+		r.log.Infof("failed to create job for %s: %s", extendedJob.Name, err)
+	}
+
 }
 
 func jobSpec() batchv1.JobSpec {

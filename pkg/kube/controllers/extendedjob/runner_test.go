@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"code.cloudfoundry.org/cf-operator/integration/environment"
-	"code.cloudfoundry.org/cf-operator/integration/util"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/apis/extendedjob/v1alpha1"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/controllers"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/controllers/extendedjob"
 	"code.cloudfoundry.org/cf-operator/pkg/kube/controllers/fakes"
+	"code.cloudfoundry.org/cf-operator/testing"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -28,7 +27,7 @@ import (
 var _ = Describe("Runner", func() {
 	Describe("Run", func() {
 		var (
-			env    environment.Catalog
+			env    testing.Catalog
 			mgr    *fakes.FakeManager
 			logs   *observer.ObservedLogs
 			log    *zap.SugaredLogger
@@ -37,7 +36,7 @@ var _ = Describe("Runner", func() {
 
 		BeforeEach(func() {
 			controllers.AddToScheme(scheme.Scheme)
-			logs, log = util.NewTestLogger()
+			logs, log = testing.NewTestLogger()
 			mgr = &fakes.FakeManager{}
 		})
 
@@ -56,7 +55,7 @@ var _ = Describe("Runner", func() {
 				Expect(logs.FilterMessage("failed to query extended jobs: fake-error").Len()).To(Equal(1))
 			})
 
-			FIt("should log create error and continue", func() {
+			It("should log create error and continue", func() {
 				jobList := []v1alpha1.ExtendedJob{
 					*env.DefaultExtendedJob("foo"),
 					*env.DefaultExtendedJob("bar"),

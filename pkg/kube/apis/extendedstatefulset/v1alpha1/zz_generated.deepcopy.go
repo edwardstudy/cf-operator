@@ -99,6 +99,13 @@ func (in *ExtendedStatefulSetStatus) DeepCopyInto(out *ExtendedStatefulSetStatus
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.Versions != nil {
+		in, out := &in.Versions, &out.Versions
+		*out = make(map[int]bool, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	return
 }
 

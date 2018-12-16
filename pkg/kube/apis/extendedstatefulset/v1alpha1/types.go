@@ -31,7 +31,8 @@ type ExtendedStatefulSetSpec struct {
 
 // ExtendedStatefulSetStatus defines the observed state of ExtendedStatefulSet
 type ExtendedStatefulSetStatus struct {
-	Nodes []string `json:"nodes"`
+	Nodes    []string     `json:"nodes"`
+	Versions map[int]bool `json:"versions"`
 }
 
 // +genclient
